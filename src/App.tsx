@@ -13,6 +13,7 @@ import FormLayout from './pages/Form/FormLayout';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Tables from './pages/Tables';
+import DataWarga from './pages/DataWarga';
 import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
 
@@ -75,6 +76,15 @@ function App() {
             <>
               <PageTitle title="Form Layout | TailAdmin - Tailwind CSS Admin Dashboard Template" />
               <FormLayout />
+            </>
+          }
+        />
+        <Route
+          path="/data-warga"
+          element={
+            <>
+              <PageTitle title="Data Warga | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <DataWarga />
             </>
           }
         />
