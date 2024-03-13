@@ -17,15 +17,12 @@ import { Tag } from 'primereact/tag';
 
 export default function ProductsDemo() {
     let emptyProduct = {
-        id: null,
-        name: '',
-        image: null,
-        description: '',
-        category: null,
-        price: 0,
-        quantity: 0,
-        rating: 0,
-        inventoryStatus: 'INSTOCK'
+        dw_id: '',
+        dw_no_kk: '',
+        dw_nik: '',
+        dw_nama_lengkap: '',
+        dw_jenis_kelamin: '',
+        dw_alamat: '',
     };
 
     const [products, setProducts] = useState(null);
@@ -269,14 +266,14 @@ export default function ProductsDemo() {
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" globalFilter={globalFilter} header={header}>
                     <Column selectionMode="multiple" exportable={false}></Column>
-                    <Column field="code" header="Code" sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column field="name" header="Name" sortable style={{ minWidth: '16rem' }}></Column>
-                    <Column field="image" header="Image" body={imageBodyTemplate}></Column>
-                    <Column field="price" header="Price" body={priceBodyTemplate} sortable style={{ minWidth: '8rem' }}></Column>
-                    <Column field="category" header="Category" sortable style={{ minWidth: '10rem' }}></Column>
-                    <Column field="rating" header="Reviews" body={ratingBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
+                    <Column field="dw_id" header="Code" sortable style={{ minWidth: '12rem' }}></Column>
+                    <Column field="dw_no_kk" header="Name" sortable style={{ minWidth: '16rem' }}></Column>
+                    <Column field="dw_nik" header="Image" body={imageBodyTemplate}></Column>
+                    <Column field="dw_nama_lengkap" header="Price" sortable style={{ minWidth: '8rem' }}></Column>
+                    <Column field="dw_jenis_kelamin" header="Category" sortable style={{ minWidth: '10rem' }}></Column>
+                    {/* <Column field="rating" header="Reviews" body={ratingBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column> */}
+                    <Column field="dw_alamat" header="Status" body={statusBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column>
+                    <Column body={actionBodyTemplate} header="Action" exportable={false} style={{ minWidth: '12rem' }}></Column>
                 </DataTable>
             </div>
 
