@@ -23,6 +23,9 @@ export default function ProductsDemo() {
         dw_nama_lengkap: '',
         dw_jenis_kelamin: '',
         dw_alamat: '',
+        dw_no_hp: '',
+        dw_ktp: '',
+        dw_user_submit: ''
     };
 
     const [products, setProducts] = useState(null);
@@ -63,29 +66,62 @@ export default function ProductsDemo() {
         setDeleteProductsDialog(false);
     };
 
-    const saveProduct = () => {
+    // const saveProductBackup = () => {
+    //     debugger
+    //     setSubmitted(true);
+
+    //     if (product.dw_nama_lengkap.trim()) {
+    //         let _products = [...products];
+    //         let _product = { ...product };
+
+    //         if (product.dw_id) {
+    //             const index = findIndexById(product.dw_id);
+
+    //             _products[index] = _product;
+    //             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 6000 });
+    //         } else {
+    //             _product.dw_id = createId();
+    //             //_product.image = 'product-placeholder.svg';
+    //             _products.push(_product);
+    //             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 6000 });
+    //         }
+
+    //         setProducts(_products);
+    //         setProductDialog(false);
+    //         setProduct(emptyProduct);
+    //     }
+    // };
+
+    const saveProduct = async () => {
+        debugger
         setSubmitted(true);
 
-        if (product.name.trim()) {
-            let _products = [...products];
-            let _product = { ...product };
+        // data to be sent to the POST request
+        let _data = { ...product };
 
-            if (product.id) {
-                const index = findIndexById(product.id);
+        const rawResponse = await fetch('https://localhost:44313/idcen/DataWarga/insert', {
+            method: 'POST',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(_data)
+        });
+        const content = await rawResponse.json();
 
-                _products[index] = _product;
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Updated', life: 3000 });
-            } else {
-                _product.id = createId();
-                _product.image = 'product-placeholder.svg';
-                _products.push(_product);
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000 });
-            }
+        const responseInsert = content;
+        console.log(responseInsert);
 
-            setProducts(_products);
+        if(responseInsert.status === "Success"){
+            toast.current.show({ severity: 'success', summary: responseInsert.status, detail: 'Data Warga has been Inserted', life: 6000 });
+            
             setProductDialog(false);
             setProduct(emptyProduct);
+            ProductService.getProducts().then((data) => setProducts(data));
+        }else{
+            toast.current.show({ severity: 'error', summary: responseInsert.status, detail: responseInsert.message, life: 6000 });
         }
+
     };
 
     const editProduct = (product) => {
@@ -104,7 +140,7 @@ export default function ProductsDemo() {
         setProducts(_products);
         setDeleteProductDialog(false);
         setProduct(emptyProduct);
-        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
+        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 6000 });
     };
 
     const findIndexById = (id) => {
@@ -145,13 +181,13 @@ export default function ProductsDemo() {
         setProducts(_products);
         setDeleteProductsDialog(false);
         setSelectedProducts(null);
-        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 3000 });
+        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Products Deleted', life: 6000 });
     };
 
     const onCategoryChange = (e) => {
         let _product = { ...product };
 
-        _product['category'] = e.value;
+        _product['dw_jenis_kelamin'] = e.value;
         setProduct(_product);
     };
 
@@ -265,69 +301,82 @@ export default function ProductsDemo() {
                         dataKey="id"  paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products" globalFilter={globalFilter} header={header}>
-                    <Column selectionMode="multiple" exportable={false}></Column>
-                    <Column field="dw_id" header="Code" sortable style={{ minWidth: '12rem' }}></Column>
-                    <Column field="dw_no_kk" header="Name" sortable style={{ minWidth: '16rem' }}></Column>
-                    <Column field="dw_nik" header="Image" body={imageBodyTemplate}></Column>
-                    <Column field="dw_nama_lengkap" header="Price" sortable style={{ minWidth: '8rem' }}></Column>
-                    <Column field="dw_jenis_kelamin" header="Category" sortable style={{ minWidth: '10rem' }}></Column>
+                    {/* <Column selectionMode="multiple" exportable={false}></Column> */}
+                    <Column field="dw_id" header="ID" sortable style={{ minWidth: '3rem' }}></Column>
+                    <Column field="dw_nama_lengkap" header="Name" sortable style={{ minWidth: '16rem' }}></Column>
+                    {/* <Column field="dw_nik" header="Image" body={imageBodyTemplate}></Column> */}
+                    <Column field="dw_no_kk" header="No. KK" sortable style={{ minWidth: '12rem' }}></Column>
+                    <Column field="dw_nik" header="NIK KTP" sortable style={{ minWidth: '8rem' }}></Column>
+                    <Column field="dw_jenis_kelamin" header="Jenis Kelamin" sortable style={{ minWidth: '10rem' }}></Column>
                     {/* <Column field="rating" header="Reviews" body={ratingBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column> */}
-                    <Column field="dw_alamat" header="Status" body={statusBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column>
+                    {/* <Column field="dw_alamat" header="Alamat" body={statusBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column> */}
+                    <Column field="dw_alamat" header="Alamat" sortable style={{ minWidth: '12rem' }}></Column>
                     <Column body={actionBodyTemplate} header="Action" exportable={false} style={{ minWidth: '12rem' }}></Column>
                 </DataTable>
             </div>
 
             <Dialog visible={productDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Product Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
                 {product.image && <img src={`https://primefaces.org/cdn/primereact/images/product/${product.image}`} alt={product.image} className="product-image block m-auto pb-3" />}
-                <div className="field">
-                    <label htmlFor="name" className="font-bold">
-                        Name
+                <div className="field" style={{marginBottom: '15px'}}>
+                    <label htmlFor="dw_nama_lengkap" className="font-bold">
+                        Nama Lengkap
                     </label>
-                    <InputText id="name" value={product.name} onChange={(e) => onInputChange(e, 'name')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.name })} />
-                    {submitted && !product.name && <small className="p-error">Name is required.</small>}
+                    <InputText id="dw_nama_lengkap" value={product.dw_nama_lengkap} onChange={(e) => onInputChange(e, 'dw_nama_lengkap')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.dw_nama_lengkap })} />
+                    {submitted && !product.dw_nama_lengkap && <small className="p-error">Name is required.</small>}
                 </div>
-                <div className="field">
-                    <label htmlFor="description" className="font-bold">
-                        Description
+                <div className="field" style={{marginBottom: '15px'}}>
+                    <label htmlFor="dw_no_kk" className="font-bold">
+                        No KK
                     </label>
-                    <InputTextarea id="description" value={product.description} onChange={(e) => onInputChange(e, 'description')} required rows={3} cols={20} />
+                    <InputText id="dw_no_kk" value={product.dw_no_kk} onChange={(e) => onInputChange(e, 'dw_no_kk')} required className={classNames({ 'p-invalid': submitted && !product.dw_no_kk })} />
+                    {submitted && !product.dw_no_kk && <small className="p-error">Name is required.</small>}
                 </div>
-
-                <div className="field">
-                    <label className="mb-3 font-bold">Category</label>
+                <div className="field" style={{marginBottom: '15px'}}>
+                    <label htmlFor="dw_nik" className="font-bold">
+                        NIK KTP
+                    </label>
+                    <InputText id="dw_nik" value={product.dw_nik} onChange={(e) => onInputChange(e, 'dw_nik')} required className={classNames({ 'p-invalid': submitted && !product.dw_nik })} />
+                    {submitted && !product.dw_nik && <small className="p-error">Name is required.</small>}
+                </div>
+                <div className="field" style={{marginBottom: '15px'}}>
+                    <label className="mb-3 font-bold">Jenis Kelamin</label>
                     <div className="formgrid grid">
                         <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category1" name="category" value="Accessories" onChange={onCategoryChange} checked={product.category === 'Accessories'} />
-                            <label htmlFor="category1">Accessories</label>
+                            <RadioButton inputId="category1" name="dw_jenis_kelamin" value="L" onChange={onCategoryChange} checked={product.dw_jenis_kelamin === 'L'} />
+                            <label htmlFor="category1">Laki-Laki</label>
                         </div>
                         <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category2" name="category" value="Clothing" onChange={onCategoryChange} checked={product.category === 'Clothing'} />
-                            <label htmlFor="category2">Clothing</label>
-                        </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category3" name="category" value="Electronics" onChange={onCategoryChange} checked={product.category === 'Electronics'} />
-                            <label htmlFor="category3">Electronics</label>
-                        </div>
-                        <div className="field-radiobutton col-6">
-                            <RadioButton inputId="category4" name="category" value="Fitness" onChange={onCategoryChange} checked={product.category === 'Fitness'} />
-                            <label htmlFor="category4">Fitness</label>
+                            <RadioButton inputId="category2" name="dw_jenis_kelamin" value="P" onChange={onCategoryChange} checked={product.dw_jenis_kelamin === 'P'} />
+                            <label htmlFor="category2">Perempuan</label>
                         </div>
                     </div>
                 </div>
-
-                <div className="formgrid grid">
-                    <div className="field col">
-                        <label htmlFor="price" className="font-bold">
-                            Price
-                        </label>
-                        <InputNumber id="price" value={product.price} onValueChange={(e) => onInputNumberChange(e, 'price')} mode="currency" currency="USD" locale="en-US" />
-                    </div>
-                    <div className="field col">
-                        <label htmlFor="quantity" className="font-bold">
-                            Quantity
-                        </label>
-                        <InputNumber id="quantity" value={product.quantity} onValueChange={(e) => onInputNumberChange(e, 'quantity')} />
-                    </div>
+                <div className="field" style={{marginBottom: '15px'}}>
+                    <label htmlFor="dw_no_hp" className="font-bold">
+                        No. HP
+                    </label>
+                    <InputText id="dw_no_hp" value={product.dw_no_hp} onChange={(e) => onInputChange(e, 'dw_no_hp')} required className={classNames({ 'p-invalid': submitted && !product.dw_no_hp })} />
+                    {submitted && !product.dw_no_hp && <small className="p-error">Name is required.</small>}
+                </div>
+                <div className="field" style={{marginBottom: '15px'}}>
+                    <label htmlFor="dw_ktp" className="font-bold">
+                        Alamat KTP
+                    </label>
+                    <InputText id="dw_ktp" value={product.dw_ktp} onChange={(e) => onInputChange(e, 'dw_ktp')} required className={classNames({ 'p-invalid': submitted && !product.dw_ktp })} />
+                    {submitted && !product.dw_ktp && <small className="p-error">Name is required.</small>}
+                </div>
+                <div className="field" style={{marginBottom: '15px'}}>
+                    <label htmlFor="dw_user_submit" className="font-bold">
+                        User Submit
+                    </label>
+                    <InputText id="dw_user_submit" value={product.dw_user_submit} onChange={(e) => onInputChange(e, 'dw_user_submit')} required className={classNames({ 'p-invalid': submitted && !product.dw_user_submit })} />
+                    {submitted && !product.dw_user_submit && <small className="p-error">Name is required.</small>}
+                </div>
+                <div className="field" style={{marginBottom: '15px'}}>
+                    <label htmlFor="dw_alamat" className="font-bold">
+                        Alamat
+                    </label>
+                    <InputTextarea id="dw_alamat" value={product.dw_alamat} onChange={(e) => onInputChange(e, 'dw_alamat')} required rows={3} cols={20} />
                 </div>
             </Dialog>
 
