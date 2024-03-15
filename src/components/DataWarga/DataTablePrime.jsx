@@ -93,7 +93,6 @@ export default function ProductsDemo() {
     // };
 
     const saveProduct = async () => {
-        debugger
         setSubmitted(true);
 
         // data to be sent to the POST request
@@ -108,20 +107,18 @@ export default function ProductsDemo() {
             body: JSON.stringify(_data)
         });
         const content = await rawResponse.json();
+        console.log(content);
 
-        const responseInsert = content;
-        console.log(responseInsert);
-
-        if(responseInsert.status === "Success"){
-            toast.current.show({ severity: 'success', summary: responseInsert.status, detail: 'Data Warga has been Inserted', life: 6000 });
+        if(content.status === "Success"){
+            toast.current.show({ severity: 'success', summary: content.status, detail: 'Data Warga has been Saved', life: 6000 });
             
             setProductDialog(false);
             setProduct(emptyProduct);
             ProductService.getProducts().then((data) => setProducts(data));
         }else{
-            toast.current.show({ severity: 'error', summary: responseInsert.status, detail: responseInsert.message, life: 6000 });
+            toast.current.show({ severity: 'error', summary: content.status, detail: content.message, life: 6000 });
         }
-
+        
     };
 
     const editProduct = (product) => {
@@ -134,13 +131,40 @@ export default function ProductsDemo() {
         setDeleteProductDialog(true);
     };
 
-    const deleteProduct = () => {
-        let _products = products.filter((val) => val.id !== product.id);
+    // const deleteProductBackup = () => {
+    //     let _products = products.filter((val) => val.dw_id !== product.dw_id);
 
-        setProducts(_products);
-        setDeleteProductDialog(false);
-        setProduct(emptyProduct);
-        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 6000 });
+    //     setProducts(_products);
+    //     setDeleteProductDialog(false);
+    //     setProduct(emptyProduct);
+    //     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 6000 });
+    // };
+
+    const deleteProduct = async () => {
+
+        // data to be sent to the POST request
+        let _data = { "dw_id" : product.dw_id};
+
+        const rawResponse = await fetch('https://localhost:44313/idcen/DataWarga/delete', {
+            method: 'POST',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(_data)
+        });
+        const content = await rawResponse.json();
+        console.log(content);
+
+        if(content.status === "Success"){
+            toast.current.show({ severity: 'success', summary: content.status, detail: 'Data Warga has been Deleted', life: 6000 });
+            
+            setDeleteProductDialog(false);
+            setProduct(emptyProduct);
+            ProductService.getProducts().then((data) => setProducts(data));
+        }else{
+            toast.current.show({ severity: 'error', summary: content.status, detail: content.message, life: 6000 });
+        }
     };
 
     const findIndexById = (id) => {
